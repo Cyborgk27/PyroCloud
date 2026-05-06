@@ -12,6 +12,6 @@ namespace PyroCloud.Core.Domain.Entities.Identity
         public bool IsActive { get; set; } = true;
         public Guid? TenantId { get; set; }
         public virtual Tenant? Tenant { get; set; }
-        public virtual ICollection<UserCompany> AllowedUsers { get; set; }
+        public virtual ICollection<UserCompany> AllowedUsers { get; set; } = new List<UserCompany>();
     }
 }
