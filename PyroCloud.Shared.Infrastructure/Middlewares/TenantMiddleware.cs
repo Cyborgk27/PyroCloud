@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace PyroCloud.Shared.Infrastructure.Middleware
+namespace PyroCloud.Shared.Infrastructure.Middlewares
 {
     public class TenantMiddleware
     {

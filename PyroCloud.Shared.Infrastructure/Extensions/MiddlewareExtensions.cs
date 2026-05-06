@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using PyroCloud.Shared.Infrastructure.Middleware;
+using PyroCloud.Shared.Infrastructure.Middlewares;
 
 namespace PyroCloud.Shared.Infrastructure.Extensions
 {
@@ -9,6 +9,7 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
         {
 
             app.UseMiddleware<TenantMiddleware>();
+            app.UseMiddleware<ApiResponseMiddleware>();
 
             return app;
         }

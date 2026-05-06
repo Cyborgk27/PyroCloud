@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using PyroCloud.Shared.Infrastructure.Common;
+using PyroCloud.Core.Domain.Common;
+using PyroCloud.Core.Domain.Exceptions;
 using System.Net;
 using System.Text.Json;
 
-namespace PyroCloud.Shared.Infrastructure.Extensions
+namespace PyroCloud.Shared.Infrastructure.Middlewares
 {
     public class ApiResponseMiddleware
     {
@@ -52,6 +53,21 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
 
                 case ArgumentException:
                 case InvalidOperationException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
+
+                case NotImplementedException:
+                    statusCode = HttpStatusCode.NotImplemented;
+                    message = "La funcionalidad solicitada no está implementada.";
+                    break;
+
+                case TimeoutException:
+                    statusCode = HttpStatusCode.RequestTimeout;
+                    message = "La solicitud ha excedido el tiempo de espera.";
+                    break;
+
+                case UserFriendlyException:
                     statusCode = HttpStatusCode.BadRequest;
                     message = exception.Message;
                     break;

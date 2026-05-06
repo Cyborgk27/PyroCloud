@@ -1,4 +1,4 @@
-﻿namespace PyroCloud.Shared.Infrastructure.Common
+﻿namespace PyroCloud.Core.Domain.Common
 {
     public class ApiResponse<T>
     {
