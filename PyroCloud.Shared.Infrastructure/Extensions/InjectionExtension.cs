@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PyroCloud.Core.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using PyroCloud.Shared.Infrastructure.Common.Settings;
+using PyroCloud.Shared.Infrastructure.Presistence.Context;
+using PyroCloud.Shared.Infrastructure.Presistence.Interceptors;
 using PyroCloud.Shared.Infrastructure.Services;
 
 namespace PyroCloud.Shared.Infrastructure.Extensions
@@ -10,6 +13,10 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
     {
         public static IServiceCollection AddInjectionInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var infraSettings = new InfrastructureSettings();
+
+            configuration.GetSection("Infrastructure").Bind(infraSettings);
+
             services.Configure<InfrastructureSettings>(configuration.GetSection("Infrastructure"));
 
             services.AddSingleton<IDateTime, DateTimeService>();
@@ -17,6 +24,16 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
             services.AddTransient<IEmailService, SmtpEmailService>();
 
             services.AddScoped<IStorageService, LocalStorageService>();
+
+            services.AddScoped<AuditInterceptor>();
+
+            services.AddDbContext<PyroDbContext>((sp, options) =>
+            {
+                var auditInterceptor = sp.GetRequiredService<AuditInterceptor>();
+
+                options.UseSqlServer(configuration.GetConnectionString(infraSettings.Database.SqlServer))
+                       .AddInterceptors(auditInterceptor);
+            });
 
             return services;
         }

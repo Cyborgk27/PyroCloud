@@ -4,5 +4,6 @@
     {
         public EmailSettings Email { get; set; } = new();
         public StorageSettings Storage { get; set; } = new();
+        public DatabaseSetting Database { get; set; } = new();
     }
 }
