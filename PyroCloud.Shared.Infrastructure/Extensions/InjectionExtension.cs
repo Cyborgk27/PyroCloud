@@ -34,6 +34,8 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
 
             services.AddScoped<IUrlService, UrlService>();
 
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
             services.AddDbContext<PyroDbContext>((sp, options) =>
             {
                 var auditInterceptor = sp.GetRequiredService<AuditInterceptor>();
