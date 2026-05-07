@@ -50,7 +50,7 @@ namespace PyroCloud.Core.Application.Services
             }
             catch (Exception ex)
             {
-                throw new UserFriendlyException("No se pudo eliminar el archivo del servidor.");
+                throw new UserFriendlyException("No se pudo eliminar el archivo del servidor. " + ex.Message);
             }
         }
     }
