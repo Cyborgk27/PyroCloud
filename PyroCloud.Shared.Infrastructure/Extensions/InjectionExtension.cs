@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PyroCloud.Core.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using PyroCloud.Shared.Infrastructure.Common.Settings;
+using PyroCloud.Shared.Infrastructure.Identity.Claims;
 using PyroCloud.Shared.Infrastructure.Presistence.Context;
 using PyroCloud.Shared.Infrastructure.Presistence.Interceptors;
 using PyroCloud.Shared.Infrastructure.Services;
@@ -17,6 +18,10 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
 
             configuration.GetSection("Infrastructure").Bind(infraSettings);
 
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+
             services.Configure<InfrastructureSettings>(configuration.GetSection("Infrastructure"));
 
             services.AddSingleton<IDateTime, DateTimeService>();
@@ -26,6 +31,8 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
             services.AddScoped<IStorageService, LocalStorageService>();
 
             services.AddScoped<AuditInterceptor>();
+
+            services.AddScoped<IUrlService, UrlService>();
 
             services.AddDbContext<PyroDbContext>((sp, options) =>
             {

@@ -1,12 +1,18 @@
+using PyroCloud.Core.Application.Extensions;
 using PyroCloud.Shared.Infrastructure.Extensions;
+using PyroCloud.Shared.Infrastructure.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddInjectionInfrastructure(configuration);
+builder.Services.AddInjectionApplication(configuration);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ResponseWrapperFilter>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/core/">
+    <Project Path="PyroCloud.Core.Application/PyroCloud.Core.Application.csproj" Id="741b04e9-d46d-4dca-abf0-66aecc36a296" />
     <Project Path="PyroCloud.Core.Domain/PyroCloud.Core.Domain.csproj" Id="d832ed37-df0a-45a2-9ec8-cc2f15bd753f" />
   </Folder>
   <Folder Name="/src/modules/" />

@@ -15,19 +15,32 @@ namespace PyroCloud.Shared.Infrastructure.Services
 
         public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string folder)
         {
-            var path = Path.Combine(_settings.LocalPath, folder);
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), _settings.LocalPath);
+            var targetDirectory = Path.Combine(rootPath, folder);
 
-            var filePath = Path.Combine(path, fileName);
-            using var file = new FileStream(filePath, FileMode.Create);
-            await fileStream.CopyToAsync(file);
+            if (!Directory.Exists(targetDirectory))
+                Directory.CreateDirectory(targetDirectory);
 
-            return filePath;
+            var physicalPath = Path.Combine(targetDirectory, fileName);
+
+            using (var file = new FileStream(physicalPath, FileMode.Create))
+            {
+                await fileStream.CopyToAsync(file);
+            }
+
+            var relativeUrl = Path.Combine("/cdn", folder, fileName).Replace("\\", "/");
+
+            return relativeUrl;
         }
 
-        public Task DeleteFileAsync(string filePath)
+        public Task DeleteFileAsync(string fileUrl)
         {
-            if (File.Exists(filePath)) File.Delete(filePath);
+            var relativePath = fileUrl.Replace("/cdn/", "").Replace("/", Path.DirectorySeparatorChar.ToString());
+            var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), _settings.LocalPath, relativePath);
+
+            if (File.Exists(physicalPath))
+                File.Delete(physicalPath);
+
             return Task.CompletedTask;
         }
     }
