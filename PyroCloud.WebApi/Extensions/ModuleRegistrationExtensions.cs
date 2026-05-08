@@ -1,4 +1,5 @@
 ﻿using PyroCloud.Modules.Auth.Extensions;
+using PyroCloud.Modules.Identity.Extensions;
 
 namespace PyroCloud.WebApi.Extensions
 {
@@ -7,6 +8,7 @@ namespace PyroCloud.WebApi.Extensions
         public static IServiceCollection AddModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthModule();
+            services.AddIdentityModule();
 
             return services;
         }

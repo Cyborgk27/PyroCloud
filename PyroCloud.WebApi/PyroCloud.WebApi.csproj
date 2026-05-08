@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PyroCloud.Core.Application\PyroCloud.Core.Application.csproj" />
     <ProjectReference Include="..\PyroCloud.Modules.Auth\PyroCloud.Modules.Auth.csproj" />
+    <ProjectReference Include="..\PyroCloud.Modules.Identity\PyroCloud.Modules.Identity.csproj" />
     <ProjectReference Include="..\PyroCloud.Shared.Infrastructure\PyroCloud.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
