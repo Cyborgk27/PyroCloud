@@ -62,7 +62,7 @@ namespace PyroCloud.Shared.Infrastructure.Presistence.Interceptors
             {
                 if (entry.State == EntityState.Added && (entry.Entity.TenantId == Guid.Empty || entry.Entity.TenantId == default))
                 {
-                    entry.Entity.TenantId = _currentUserProvider.TenantId ?? Guid.Empty;
+                    entry.Entity.TenantId = _currentUserProvider.TenantId ?? null;
                 }
             }
 

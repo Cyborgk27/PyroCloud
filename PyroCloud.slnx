@@ -4,7 +4,9 @@
     <Project Path="PyroCloud.Core.Application/PyroCloud.Core.Application.csproj" Id="741b04e9-d46d-4dca-abf0-66aecc36a296" />
     <Project Path="PyroCloud.Core.Domain/PyroCloud.Core.Domain.csproj" Id="d832ed37-df0a-45a2-9ec8-cc2f15bd753f" />
   </Folder>
-  <Folder Name="/src/modules/" />
+  <Folder Name="/src/modules/">
+    <Project Path="PyroCloud.Modules.Auth/PyroCloud.Modules.Auth.csproj" Id="944c2603-153a-4e42-bcb1-7bec7fdcfd1c" />
+  </Folder>
   <Folder Name="/src/shared/">
     <Project Path="PyroCloud.Shared.Infrastructure/PyroCloud.Shared.Infrastructure.csproj" Id="4cdc3acf-87f4-4ff1-a165-f451d21155d6" />
   </Folder>

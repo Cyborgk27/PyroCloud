@@ -1,6 +1,7 @@
 using PyroCloud.Core.Application.Extensions;
 using PyroCloud.Shared.Infrastructure.Extensions;
 using PyroCloud.Shared.Infrastructure.Filters;
+using PyroCloud.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -8,6 +9,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddInjectionInfrastructure(configuration);
 builder.Services.AddInjectionApplication(configuration);
+builder.Services.AddModules(configuration);
 
 builder.Services.AddControllers(options =>
 {
@@ -29,6 +31,8 @@ if (app.Environment.IsDevelopment())
 app.UseInfrastructureMiddleware();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

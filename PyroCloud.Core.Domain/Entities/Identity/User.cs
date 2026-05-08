@@ -9,6 +9,7 @@ namespace PyroCloud.Core.Domain.Entities.Identity
         public string PasswordHash { get; set; } = default!;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? ImageUrl { get; set; }
         public Guid? TenantId { get; set; }
         public Tenant? Tenant { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
