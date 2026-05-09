@@ -7,5 +7,7 @@ namespace PyroCloud.Core.Domain.Entities.Identity
         public string Name { get; set; } = default!;
         public string ShowName { get; set; } = default!;
         public string Description { get; set; } = default!;
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }
