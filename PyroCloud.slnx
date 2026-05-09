@@ -7,6 +7,7 @@
   <Folder Name="/src/modules/">
     <Project Path="PyroCloud.Modules.Auth/PyroCloud.Modules.Auth.csproj" Id="944c2603-153a-4e42-bcb1-7bec7fdcfd1c" />
     <Project Path="PyroCloud.Modules.Identity/PyroCloud.Modules.Identity.csproj" Id="128c76e3-93ed-4f40-ae90-2fe0ee1c8213" />
+    <Project Path="PyroCloud.Modules.Inventory/PyroCloud.Modules.Inventory.csproj" Id="2db2336f-a20f-4e2f-b1d5-4274999eb37c" />
   </Folder>
   <Folder Name="/src/shared/">
     <Project Path="PyroCloud.Shared.Infrastructure/PyroCloud.Shared.Infrastructure.csproj" Id="4cdc3acf-87f4-4ff1-a165-f451d21155d6" />

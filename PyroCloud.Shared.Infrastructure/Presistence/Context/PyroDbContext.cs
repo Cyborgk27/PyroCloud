@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PyroCloud.Core.Domain.Common;
 using PyroCloud.Core.Domain.Entities.Identity;
+using PyroCloud.Core.Domain.Entities.Inventory;
 using PyroCloud.Core.Domain.Interfaces;
-using PyroCloud.Shared.Infrastructure.Extensions;
 
 namespace PyroCloud.Shared.Infrastructure.Presistence.Context
 {
@@ -23,6 +22,11 @@ namespace PyroCloud.Shared.Infrastructure.Presistence.Context
         public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
         public DbSet<Company> Companies => Set<Company>();
         public DbSet<UserCompany> UserCompanies => Set<UserCompany>();
+        #endregion
+
+        #region Inventory schema
+        public DbSet<Product> Products => Set<Product>();
+        public DbSet<ProductBatch> ProductBatches => Set<ProductBatch>();
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
