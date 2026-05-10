@@ -9,6 +9,7 @@ using PyroCloud.Shared.Infrastructure.Identity.Claims;
 using PyroCloud.Shared.Infrastructure.Presistence.Context;
 using PyroCloud.Shared.Infrastructure.Presistence.Interceptors;
 using PyroCloud.Shared.Infrastructure.Services;
+using PyroCloud.Shared.Infrastructure.Setup;
 using System.Text;
 
 namespace PyroCloud.Shared.Infrastructure.Extensions
@@ -20,6 +21,8 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
             var infraSettings = new InfrastructureSettings();
 
             configuration.GetSection("Infrastructure").Bind(infraSettings);
+
+            services.AddScoped<SeedDataService>();
 
             var jwtSettings = infraSettings.Security.Jwt;
 
