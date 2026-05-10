@@ -5,6 +5,7 @@ namespace PyroCloud.Core.Domain.Entities.Identity
     public class Tenant : BaseEntity<Guid>
     {
         public string Name { get; set; } = default!;
+        public string Code { get; set; } = default!;
         public string? Description { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
