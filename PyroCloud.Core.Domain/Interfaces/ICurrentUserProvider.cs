@@ -6,5 +6,7 @@
         Guid? TenantId { get; }
         bool IsAuthenticated { get; }
         string? UserName { get; }
+        List<string> Roles { get; }
+        List<string> Permissions { get; }
     }
 }

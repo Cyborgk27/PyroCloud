@@ -18,15 +18,26 @@ namespace PyroCloud.Shared.Infrastructure.Services
             _settings = settings.Value;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(User user, Tenant tenant, List<string> roles, List<string> permissions)
         {
             var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("userName", user.Username)
-        };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("userName", user.Username),
+                new Claim("tenantId", tenant.Id.ToString() ?? ""),
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            foreach (var permission in permissions)
+            {
+                claims.Add(new Claim("permissions", permission));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Security.Jwt.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

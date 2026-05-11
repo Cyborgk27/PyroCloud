@@ -26,21 +26,43 @@ namespace PyroCloud.Modules.Auth.Services
         }
         public async Task<UserResponseDto> LoginAsync(LoginRequestDto input)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == input.Username);
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .ThenInclude(r => r.RolePermissions)
+                .FirstOrDefaultAsync(u => u.Username == input.Username);
+
             var isValid = !_passwordHasher.Verify(input.Password, user!.PasswordHash);
-            
-            if(user is null || isValid)
+            var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Code == input.TenantCode);
+
+            if (tenant == null)
+            {
+                throw new UserFriendlyException("Tenant code is incorrect");
+            }
+
+
+            if (user is null || isValid)
             {
                 throw new UserFriendlyException("User or password is incorrect");
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+
+            var permissions = user.UserRoles
+                .SelectMany(ur => ur.Role.RolePermissions)
+                .Select(rp => rp.Permission)
+                .Distinct()
+                .ToList();
+
+            var token = _jwtTokenGenerator.GenerateToken(user, tenant, roles, permissions);
 
             var userResponse = new UserResponseDto
-            {
+            {   
                 Username = user.Username,
                 ImageUrl = user.ImageUrl!,
-                Token = token
+                Token = token,
+                Roles = roles,
+                Permissions = permissions,
             };
 
             return userResponse;
