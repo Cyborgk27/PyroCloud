@@ -26,7 +26,7 @@ namespace PyroCloud.Modules.Identity.Services
 
         public async Task<IEnumerable<RoleDto>> GetAvaliableRoles()
         {
-            return await _context.Roles.Select(r => new RoleDto
+            return await _context.Roles.Where(x => !x.IsDeleted).Select(r => new RoleDto
             {
                 Id = r.Id,
                 Name = r.Name,
