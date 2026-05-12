@@ -58,5 +58,13 @@ namespace PyroCloud.WebApi.Controllers.Identity
             var role = await _roleAppService.UpdateRole(dto);
             return Ok(role);
         }
+
+        [HttpDelete]
+        [HasPermission(IdentityPermissions.Roles.Manage)]
+        public async Task<IActionResult> DeleteRole(int id)
+        {
+            var role = await _roleAppService.DeleteRole(id);
+            return Ok(role);
+        }
     }
 }
