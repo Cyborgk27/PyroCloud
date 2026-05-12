@@ -24,6 +24,21 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
 
             configuration.GetSection("Infrastructure").Bind(infraSettings);
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PyroCloudCorsPolicy", policy =>
+                {
+                    var cors = infraSettings.Cors;
+                    if (cors != null)
+                    {
+                        policy.WithOrigins(cors.AllowedOrigins)
+                              .WithMethods(cors.AllowedMethods)
+                              .WithHeaders(cors.AllowedHeaders)
+                              .AllowCredentials();
+                    }
+                });
+            });
+
             services.AddScoped<SeedDataService>();
 
             var jwtSettings = infraSettings.Security.Jwt;

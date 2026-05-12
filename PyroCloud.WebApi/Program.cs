@@ -48,6 +48,8 @@ app.UseInfrastructureMiddleware();
 
 app.UseHttpsRedirection();
 
+app.UseCors("PyroCloudCorsPolicy");
+
 app.UseAuthentication();
 
 app.UseAuthorization();

@@ -39,7 +39,10 @@ namespace PyroCloud.Modules.Identity.Services
 
         public async Task<RoleDto> GetRoleByIdAsync(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _context.Roles
+                .Include(x => x.RolePermissions)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
             if (role == null)
                 throw new UserFriendlyException("Role not found");
             return new RoleDto
@@ -82,7 +85,7 @@ namespace PyroCloud.Modules.Identity.Services
             var existingRole = await _context.Roles.Include(r => r.RolePermissions).FirstOrDefaultAsync(r => r.Id == role.Id);
             if (existingRole == null)
                 throw new UserFriendlyException("Role not found");
-            existingRole.Name = role.Name;
+            //existingRole.Name = role.Name;
             existingRole.ShowName = role.ShowName;
             existingRole.Description = role.Description;
             // Update permissions
