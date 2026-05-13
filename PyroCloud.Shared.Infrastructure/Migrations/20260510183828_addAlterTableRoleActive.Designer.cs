@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PyroCloud.Shared.Infrastructure.Presistence.Context;
 
@@ -11,9 +12,11 @@ using PyroCloud.Shared.Infrastructure.Presistence.Context;
 namespace PyroCloud.Shared.Infrastructure.Migrations
 {
     [DbContext(typeof(PyroDbContext))]
-    partial class PyroDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260510183828_addAlterTableRoleActive")]
+    partial class addAlterTableRoleActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
