@@ -1,14 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PyroCloud.Core.Domain.Interfaces;
+using PyroCloud.Shared.Infrastructure.Authorization;
 using PyroCloud.Shared.Infrastructure.Common.Settings;
 using PyroCloud.Shared.Infrastructure.Identity.Claims;
 using PyroCloud.Shared.Infrastructure.Presistence.Context;
 using PyroCloud.Shared.Infrastructure.Presistence.Interceptors;
 using PyroCloud.Shared.Infrastructure.Services;
+using PyroCloud.Shared.Infrastructure.Setup;
 using System.Text;
 
 namespace PyroCloud.Shared.Infrastructure.Extensions
@@ -20,6 +23,23 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
             var infraSettings = new InfrastructureSettings();
 
             configuration.GetSection("Infrastructure").Bind(infraSettings);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("PyroCloudCorsPolicy", policy =>
+                {
+                    var cors = infraSettings.Cors;
+                    if (cors != null)
+                    {
+                        policy.WithOrigins(cors.AllowedOrigins)
+                              .WithMethods(cors.AllowedMethods)
+                              .WithHeaders(cors.AllowedHeaders)
+                              .AllowCredentials();
+                    }
+                });
+            });
+
+            services.AddScoped<SeedDataService>();
 
             var jwtSettings = infraSettings.Security.Jwt;
 
@@ -62,6 +82,10 @@ namespace PyroCloud.Shared.Infrastructure.Extensions
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
             services.AddDbContext<PyroDbContext>((sp, options) =>
             {

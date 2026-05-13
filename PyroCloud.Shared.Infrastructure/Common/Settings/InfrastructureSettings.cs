@@ -6,5 +6,6 @@
         public StorageSettings Storage { get; set; } = new();
         public DatabaseSetting Database { get; set; } = new();
         public SecuritySettings Security { get; set; } = new();
+        public CorsSettings Cors { get; set; } = new();
     }
 }

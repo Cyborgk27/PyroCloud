@@ -1,6 +1,7 @@
 using PyroCloud.Core.Application.Extensions;
 using PyroCloud.Shared.Infrastructure.Extensions;
 using PyroCloud.Shared.Infrastructure.Filters;
+using PyroCloud.Shared.Infrastructure.Setup;
 using PyroCloud.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    try
+    {
+        var seeder = serviceProvider.GetRequiredService<SeedDataService>();
+        await seeder.SeedAsync();
+        Console.WriteLine("Seed Data ejecutado correctamente.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error al ejecutar Seed Data: {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -31,6 +47,8 @@ if (app.Environment.IsDevelopment())
 app.UseInfrastructureMiddleware();
 
 app.UseHttpsRedirection();
+
+app.UseCors("PyroCloudCorsPolicy");
 
 app.UseAuthentication();
 

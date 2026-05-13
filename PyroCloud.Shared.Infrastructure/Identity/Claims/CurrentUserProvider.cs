@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PyroCloud.Core.Domain.Interfaces;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace PyroCloud.Shared.Infrastructure.Identity.Claims
 {
@@ -17,14 +18,10 @@ namespace PyroCloud.Shared.Infrastructure.Identity.Claims
         {
             get
             {
-                var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                              ?? _httpContextAccessor.HttpContext?.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
-                if (Guid.TryParse(claimValue, out var userIdGuid))
-                {
-                    return userIdGuid;
-                }
-
-                return null;
+                return Guid.TryParse(claimValue, out var userIdGuid) ? userIdGuid : null;
             }
         }
 
@@ -32,13 +29,36 @@ namespace PyroCloud.Shared.Infrastructure.Identity.Claims
         {
             get
             {
-                var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst("tenant_id")?.Value;
+                var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst("tenantId")?.Value;
                 return Guid.TryParse(claimValue, out var tenantId) ? tenantId : null;
             }
         }
 
         public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
 
-        public string? UserName => _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+        public string? UserName => _httpContextAccessor.HttpContext?.User?.FindFirst("userName")?.Value
+                                ?? _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+        public List<string> Roles
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext?.User?
+                    .FindAll(ClaimTypes.Role)
+                    .Select(c => c.Value)
+                    .ToList() ?? new List<string>();
+            }
+        }
+
+        public List<string> Permissions
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext?.User?
+                    .FindAll("permission")
+                    .Select(c => c.Value)
+                    .ToList() ?? new List<string>();
+            }
+        }
     }
 }

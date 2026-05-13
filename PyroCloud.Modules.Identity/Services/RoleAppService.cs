@@ -26,7 +26,7 @@ namespace PyroCloud.Modules.Identity.Services
 
         public async Task<IEnumerable<RoleDto>> GetAvaliableRoles()
         {
-            return await _context.Roles.Select(r => new RoleDto
+            return await _context.Roles.Where(x => !x.IsDeleted).Select(r => new RoleDto
             {
                 Id = r.Id,
                 Name = r.Name,
@@ -39,9 +39,13 @@ namespace PyroCloud.Modules.Identity.Services
 
         public async Task<RoleDto> GetRoleByIdAsync(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
+            var role = await _context.Roles
+                .Include(x => x.RolePermissions.Where(x => x.IsDeleted == false))
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (role == null || role.IsDeleted)
                 throw new UserFriendlyException("Role not found");
+
             return new RoleDto
             {
                 Id = role.Id,
@@ -79,46 +83,59 @@ namespace PyroCloud.Modules.Identity.Services
 
         public async Task<RoleDto> UpdateRole(RoleDto role)
         {
-            var existingRole = await _context.Roles.Include(r => r.RolePermissions).FirstOrDefaultAsync(r => r.Id == role.Id);
+            var existingRole = await _context.Roles
+                .Include(r => r.RolePermissions)
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(r => r.Id == role.Id);
+
             if (existingRole == null)
                 throw new UserFriendlyException("Role not found");
-            existingRole.Name = role.Name;
+
             existingRole.ShowName = role.ShowName;
             existingRole.Description = role.Description;
-            // Update permissions
-            var existingPermissions = existingRole.RolePermissions.Select(rp => rp.Permission).ToList();
-            var newPermissions = role.Permissions.ToList();
-            // Remove old permissions
-            foreach (var permission in existingPermissions)
+
+            var permissionsToSoftDelete = existingRole.RolePermissions
+                .Where(rp => !rp.IsDeleted && !role.Permissions.Contains(rp.Permission))
+                .ToList();
+
+            foreach (var rp in permissionsToSoftDelete)
             {
-                if (!newPermissions.Contains(permission))
+                _context.RolePermissions.Remove(rp);
+            }
+
+            foreach (var permissionName in role.Permissions)
+            {
+                var existingRp = existingRole.RolePermissions
+                    .FirstOrDefault(rp => rp.Permission == permissionName);
+
+                if (existingRp == null)
                 {
-                    var rpToRemove = existingRole.RolePermissions.FirstOrDefault(rp => rp.Permission == permission);
-                    if (rpToRemove != null)
+                    existingRole.RolePermissions.Add(new RolePermission
                     {
-                        _context.Remove(rpToRemove);
-                    }
+                        Permission = permissionName,
+                        RoleId = existingRole.Id
+                    });
                 }
-            }
-            // Add new permissions
-            foreach (var permission in newPermissions)
-            {
-                if (!existingPermissions.Contains(permission))
+                else if (existingRp.IsDeleted)
                 {
-                    existingRole.RolePermissions.Add(new RolePermission { Permission = permission });
+                    existingRp.IsDeleted = false;
+                    existingRp.DeletedBy = null;
+                    existingRp.DeletedDate = null;
+                    _context.Entry(existingRp).State = EntityState.Modified;
                 }
             }
+
             await _context.SaveChangesAsync();
+
             return new RoleDto
             {
                 Id = existingRole.Id,
                 Name = existingRole.Name,
                 ShowName = existingRole.ShowName,
                 Description = existingRole.Description,
-                Permissions = existingRole.RolePermissions.Select(rp => rp.Permission)
+                Permissions = role.Permissions
             };
         }
-
         public async Task<RoleDto> DeleteRole(int id)
         {
             var existingRole = await _context.Roles.FindAsync(id);
