@@ -40,7 +40,7 @@ namespace PyroCloud.WebApi.Controllers.Identity
         }
         
         [HttpPut]
-        public async Task<IActionResult> EditTenant(TenantDto dto)
+        public async Task<IActionResult> EditTenant([FromForm] TenantDto dto)
         {
             var result = await _tenantAppService.UpdateTenant(dto);
             return Ok(result);

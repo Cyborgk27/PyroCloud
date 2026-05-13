@@ -48,7 +48,8 @@ namespace PyroCloud.Modules.Identity.Services
                 Description = tenant.Description,
                 Code = tenant.Code,
                 Email = tenant.Email,
-                ImageUrl = tenant.ImageUrl
+                ImageUrl = tenant.ImageUrl,
+                PhoneNumber = tenant.PhoneNumber,
             };
 
         }
@@ -84,15 +85,21 @@ namespace PyroCloud.Modules.Identity.Services
         public async Task<TenantDto> UpdateTenant(TenantDto tenant)
         {
             var existingTenant = await _context.Tenants.FirstOrDefaultAsync(r => r.Id == tenant.Id);
-            var imageUrl = await _file.SaveFileAsync(tenant.ImageUrl, "tenants");
 
             if (existingTenant == null)
                 throw new UserFriendlyException("Tenant not found");
+
+            if (tenant.ImageUrl is not null)
+            {
+                var imageUrl = await _file.SaveFileAsync(tenant.ImageUrl, "tenants");
+                existingTenant.ImageUrl = imageUrl;
+            }
+
+            
             existingTenant.Name = tenant.Name;
             existingTenant.Email = tenant.Email;
             existingTenant.PhoneNumber = tenant.PhoneNumber;
             existingTenant.Description = tenant.Description;
-            existingTenant.ImageUrl = imageUrl;
 
             await _context.SaveChangesAsync();
             return new TenantDto
