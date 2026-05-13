@@ -43,8 +43,9 @@ namespace PyroCloud.Modules.Identity.Services
                 .Include(x => x.RolePermissions.Where(x => x.IsDeleted == false))
                 .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (role == null)
+            if (role == null || role.IsDeleted)
                 throw new UserFriendlyException("Role not found");
+
             return new RoleDto
             {
                 Id = role.Id,
