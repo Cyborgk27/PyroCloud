@@ -12,11 +12,8 @@ namespace PyroCloud.Modules.Identity.Interfaces
 
         Task<TenantDto> CreateTenant(TenantDto tenant);
 
-        //Task<TenantDto> UpdateRole(TenantDto tenant);
         Task<TenantDto> UpdateTenant(TenantDto tenant);
 
-        ////Task<TenantDto> DeleteRole(int id);
-        //ToggleTenantActive
         Task<UpdateTenantStatusDto> ToggleTenantActive(Guid id);
     }
 }

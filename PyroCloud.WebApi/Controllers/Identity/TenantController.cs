@@ -20,8 +20,8 @@ namespace PyroCloud.WebApi.Controllers.Identity
         [HttpGet]
         public async Task<IActionResult> GetTenants()
         {
-            var roles = await _tenantAppService.GetAvaliableTenants();
-            return Ok(roles);
+            var tenants = await _tenantAppService.GetAvaliableTenants();
+            return Ok(tenants);
         }
 
         [HttpGet("/tenant/{id:guid}")]
