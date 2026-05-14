@@ -85,7 +85,30 @@ public class ProductAppService : IProductAppService
         return await GetByIdAsync(id);
     }
 
-    // Método privado para centralizar el mapeo y cálculo de stock
+    public async Task<ProductResponseDto> DeleteAsync(Guid id)
+    {
+        var product = await _context.Products
+            .Include(p => p.Batches)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (product == null)
+        {
+            throw new UserFriendlyException($"El producto con ID {id} no existe o ya fue eliminado.");
+        }
+
+        if (product.TotalStock > 0)
+        {
+            throw new UserFriendlyException(
+                $"No se puede eliminar el producto '{product.Name}' porque aún tiene {product.TotalStock} unidades en stock distribuidas en sus lotes.");
+        }
+
+        _context.Products.Remove(product);
+
+        await _context.SaveChangesAsync();
+
+        return MapToResponseDto(product);
+    }
+
     private ProductResponseDto MapToResponseDto(Product product)
     {
         return new ProductResponseDto
@@ -95,7 +118,6 @@ public class ProductAppService : IProductAppService
             SKU = product.SKU ?? "",
             ReferencePrice = product.ReferencePrice,
             ImageUrl = product.ImageUrl,
-            // Sumamos el stock de todos los lotes activos
             TotalStock = product.Batches.Sum(b => b.RemainingQuantity),
             ActiveBatches = product.Batches
                 .Where(b => b.RemainingQuantity > 0)

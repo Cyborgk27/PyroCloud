@@ -15,5 +15,6 @@ namespace PyroCloud.Modules.Inventory.Interfaces
 
         // Actualiza datos maestros (Nombre, descripción, etc.)
         Task<ProductResponseDto> UpdateAsync(Guid id, UpdateProductDto input);
+        Task<ProductResponseDto> DeleteAsync(Guid id);
     }
 }
